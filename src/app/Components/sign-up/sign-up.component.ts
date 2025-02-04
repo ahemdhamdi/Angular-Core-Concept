@@ -61,13 +61,6 @@ export class SignUpComponent {
     this.router.navigate(['/profile',nameValue])
   }
 
-
-
-  //Change Language func
-  useLanguage(language: string): void {
-    this.translate.use(language);
-  }
-
   
   //#region wizard or Stepper Funcs
   ngAfterViewInit() {

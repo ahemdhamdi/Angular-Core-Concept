@@ -17,6 +17,7 @@
   "latitude":"Latitude",
   "longitude":"Longitude",
   "submit":"Submit",
+  "back":"Back",
   "pharmacyDetails": {
     "title": "Pharmacy Details",
     "desc": "Basic pharmacy details",

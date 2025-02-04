@@ -1,1 +1,26 @@
-<app-sign-up></app-sign-up>
+<div class="content" [dir]="'dir'| translate">  
+    <div class="container-fluid p-4">
+        <div class="header">
+            <div class="back-arr">
+                <i class="bi bi-arrow-left"></i>
+                <button class="btn btn-outline-secondary" type="button">
+                     {{'back' | translate}}
+                </button>
+            </div>
+            <div class="translate-btn">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-translate"></i> {{'Language' | translate}}
+                    </button>
+                    <ul class="dropdown-menu">
+                    <li><button class="dropdown-item" (click)="useLanguage('en')">{{'English'|translate}}</button></li>
+                    <li><button class="dropdown-item" (click)="useLanguage('ar')">{{'Arabic'|translate}}</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-sign-up></app-sign-up>
+
+</div>
