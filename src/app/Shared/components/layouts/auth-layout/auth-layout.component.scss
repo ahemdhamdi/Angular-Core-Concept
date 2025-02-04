@@ -1,4 +1,18 @@
 .header{
     display: flex;
     justify-content: space-between;
+    .back-arr{
+
+        button{
+            border: none !important;
+            color: black !important;
+            font-size: large;
+            font-weight: 700 !important;
+        }
+
+        .bi-arrow-left::before {
+            font-weight: 900 !important;
+        }
+    }
+    
 }
