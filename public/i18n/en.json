@@ -1,0 +1,40 @@
+{
+  "dir":"ltr",
+  "Language":"Languages",
+  "Arabic":"Arabic",
+  "English":"English",
+  "Email":"Email",
+  "License":"License",
+  "Password":"Password",
+  "ConfirmPassword":"Confirm Password",
+  "Next":"Next",
+  "Cancle":"Cancle",
+  "Return":"Return",
+  "country":"Country",
+  "city":"City",
+  "street":"Street",
+  "zipCode":"Zip Code",
+  "latitude":"Latitude",
+  "longitude":"Longitude",
+  "submit":"Submit",
+  "pharmacyDetails": {
+    "title": "Pharmacy Details",
+    "desc": "Basic pharmacy details",
+    "subTitle": "Basic Informations",
+    "name":"Pharmacy Name",
+    "pharmacist":"pharmacist's Name"
+  },
+  "pharmacyLocation": {
+    "title": "Location",
+    "desc": "Location And Places",
+    "subTitle": "Working Days & Hours"
+    
+  },
+  "pharmacyWorking": {
+    "title": "Working Days",
+    "desc": "Working Days & hours",
+    "subTitle": "Working Days & hours",
+    "from":"Workin Hours - From",
+    "to":"To -"
+  }
+}

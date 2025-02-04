@@ -1,0 +1,175 @@
+<div class="content" [dir]="'dir'| translate">  
+    <div class="container-fluid p-4">
+        <div class="header">
+            <div class="back-arr">
+                <button class="btn btn-outline-secondary" type="button" (click)="nextPrev(-1)" data-btn-previous="true" style="opacity: 1;">
+                    <i class="bi bi-arrow-left"></i> {{'Return' | translate}}
+                </button>
+            </div>
+            <div class="translate-btn">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-translate"></i> {{'Language' | translate}}
+                    </button>
+                    <ul class="dropdown-menu">
+                    <li><button class="dropdown-item" (click)="useLanguage('en')">{{'English'|translate}}</button></li>
+                    <li><button class="dropdown-item" (click)="useLanguage('ar')">{{'Arabic'|translate}}</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card container my-5">
+        <div class="card-body py-5 px-lg-5 px-0">
+            <div class="lpx-wizard d-flex w-100">
+                <ul class="lpx-wizard-list d-lg-flex p-0 w-100">
+                    <li class="lpx-wizard-item active" data-wizard-item="">
+                        <div class="lpx-wizard-number flex-center rounded-2 mb-2 mx-auto"><strong>1</strong></div>
+                        <h5 class="mb-0 text-dark"><strong>{{'pharmacyDetails.title' | translate}}</strong></h5>
+                        <small class="text-muted">{{'pharmacyDetails.desc' | translate}}</small>
+                    </li>
+                    <li class="lpx-wizard-item" data-wizard-item="">
+                        <div class="lpx-wizard-number flex-center rounded-2 mb-2 mx-auto"> <strong>2</strong></div>
+                        <h5 class="mb-0 text-dark"><strong>{{'pharmacyLocation.title' | translate}}</strong></h5>
+                        <small class="text-muted">{{'pharmacyLocation.desc' | translate}}</small>
+                    </li>
+                    <li class="lpx-wizard-item active" data-wizard-item="">
+                        <div class="lpx-wizard-number flex-center rounded-2 mb-2 mx-auto"> <strong>3</strong></div>
+                        <h5 class="mb-0 text-dark"><strong>{{'pharmacyWorking.title'|translate}}</strong></h5>
+                        <small class="text-muted">{{'pharmacyWorking.desc'|translate}}</small>
+                    </li>
+                </ul>
+            </div>
+        
+            <!-- ======= Pharmacy Basic Details tab ======== -->
+            <form [formGroup]="registerform" (ngSubmit)="submit()">
+                <div class="lpx-wizard-content active" data-form-tab="">
+                    <div class="row my-2">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <h5 class="text-dark"><strong>{{'pharmacyDetails.subTitle' | translate}}</strong></h5>
+                            </div>
+                            
+                            <div class="row" formGroupName="basic">
+                                <div class="col-xl-6 mb-3">
+                                    <input type="text" formControlName="name" placeholder="{{'pharmacyDetails.name' | translate}} *" class="form-control" id="parmacyName">
+                                </div>
+            
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="pharmacist" placeholder="{{'pharmacyDetails.pharmacist' | translate}} *" class="form-control" id="PharmacistName">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="email" formControlName="email" placeholder="{{'Email' | translate}} *" class="form-control" id="email">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="license" placeholder="{{'License' | translate}} *" class="form-control" id="license">
+                                </div>
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="password" formControlName="password" placeholder="{{'Password' | translate}} *" class="form-control" id="Password">
+                                </div>
+                                <div class="col-xl-6 mb-3">
+                                    <input type="password" formControlName="confirm_password" placeholder="{{'ConfirmPassword' | translate}} *" class="form-control" id="confirmPassword">
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ======= Pharmacy Location And Place ======== -->
+                <div class="lpx-wizard-content active" data-form-tab="">
+                    <div class="row my-2">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <h5 class="text-dark"><strong>{{'pharmacyLocation.subTitle'|translate}}</strong></h5>
+                            </div>
+                            
+                            <div class="row" formGroupName="location">
+                                <div class="col-xl-6 mb-3">
+                                    <input type="text" formControlName="country" placeholder="{{'country' | translate}} *" class="form-control" id="Country">
+                                </div>
+            
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="city" placeholder="{{'city' | translate}} *"  class="form-control" id="city">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="street" placeholder="{{'street' | translate}} *" class="form-control" id="street">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="number" formControlName="zip" placeholder="{{'zipCode' | translate}} *" class="form-control" id="Zip">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="latitude" placeholder="{{'latitude' | translate}} *" class="form-control" id="latitude">
+                                </div>
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="longitude" placeholder="{{'longitude' | translate}} *" class="form-control" id="longitude">
+                                </div>
+                            
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <!-- ======= Pharmacy Working Days ======== -->
+                <div class="lpx-wizard-content active" data-form-tab="">
+                    <div class="row my-2">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <h5 class="text-dark"><strong>{{'pharmacyWorking.subTitle'|translate}}</strong></h5>
+                            </div>
+                        
+                            <div class="row" formGroupName="hourse">
+                                <div class="col-xl-6 mb-3">
+                                    <input type="text" formControlName="start_day" placeholder="{{'pharmacyWorking.from' | translate}} *" class="form-control" id="from">
+                                </div> 
+            
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="text" formControlName="end_day" placeholder="{{'pharmacyWorking.to' | translate}} *" class="form-control" id="to">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="time" formControlName="start_time" placeholder="open time *" class="form-control" id="openTime">
+                                </div>
+
+                                <div class="col-xl-6 mb-3">        
+                                    <input type="time" formControlName="end_time" placeholder="close time *" class="form-control" id="closeTime">
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            
+                <div class="row mt-3">
+                    
+                    <div class="col-12 col-xl-12 mr-auto">
+                        <div class="lpx-wizard-buttons d-flex justify-content-end">
+                            <button class="btn btn-outline-secondary m-1" type="button" data-btn-previous="true" style="opacity: 1;">
+                                {{'Cancle' | translate}}
+                            </button>
+                            @if(readyToSubmit){
+                                <button class="btn btn-primary m-1" type="submit">
+                                    <i class="bi bi-check" width="100" height="100"></i> {{'submit' | translate}} 
+                                </button>
+                            }
+                            <button class="btn btn-primary next-btn m-1" type="button" (click)="nextPrev(1)" data-btn-next="true" style="opacity: 1;">
+                                <i class="bi bi-check" width="100" height="100"></i> {{'Next' | translate}} 
+                            </button>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>

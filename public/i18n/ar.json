@@ -1,0 +1,40 @@
+{
+  "dir":"rtl",
+  "Language":"اللغة",
+  "Arabic":"العربية",
+  "English":"الانجليزية",
+  "Email":"البريد الالكتروني",
+  "License":"الرخصة",
+  "Password":"كلمة السر",
+  "ConfirmPassword":"تاكيد كلمة السر",
+  "Next":"التالي",
+  "Cancle":"الغاء",
+  "Return":"رجوع",
+  "country":"الدولة",
+  "city":"المدينة",
+  "street":"الشارع",
+  "zipCode":"رقم البريد",
+  "latitude":"خط الطول",
+  "longitude":"خط العرض",
+  "submit":"التسجيل",
+  "pharmacyDetails": {
+    "title": "تفاصيل الصيدلية",
+    "desc": "تفاصيل الصيدلية الرئيسية",
+    "subTitle": "المعلومات الرئيسية",
+    "name":"اسم الصيدلية",
+    "pharmacist":"اسم الصيدلاني"
+  },
+  "pharmacyLocation": {
+    "title": "الموقع",
+    "desc": "الموقع والمكان",
+    "subTitle": "الموقع والمكان",
+    "country":"الدولة"
+  },
+  "pharmacyWorking": {
+    "title": "ايام العمل",
+    "desc": "ايام وساعات العمل",
+    "subTitle": "ايام وساعات العمل",
+    "from":"ساعات العمل - من -",
+    "to":"- الي"
+  }
+}
