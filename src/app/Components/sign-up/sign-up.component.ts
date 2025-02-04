@@ -56,9 +56,14 @@ export class SignUpComponent {
 
 
   submit(){
-    alert('success login');
-    const nameValue = this.registerform.get('basic.name')?.value;
-    this.router.navigate(['/profile',nameValue])
+    if(this.registerform.valid){
+      alert('success login');
+      const nameValue = this.registerform.get('basic.name')?.value;
+      this.router.navigate(['/profile',nameValue])
+    }
+    else{
+      alert('Please Enter Pharmacy Name');
+    }
   }
 
   
