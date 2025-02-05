@@ -105,16 +105,17 @@
                     
                         <div class="row" formGroupName="workingHoursForm">
 
-                            
-                            <div class="btn-container col-9">
-                                <div *ngFor="let dayControl of daysArray.controls; let i = index" >
-                                    <button type="button" (click)="toggleDay(i)" [ngClass]="{'selected': dayControl.get('enabled')?.value}">
-                                        {{ dayControl.get('day')?.value }}
-                                    </button>
+                            <div class="btn-container col-md-9">
+                                <div class="row">
+                                    <div class="col m-1" *ngFor="let dayControl of daysArray.controls; let i = index" >
+                                        <button type="button" (click)="toggleDay(i)" [ngClass]="{'selected': dayControl.get('enabled')?.value}">
+                                            {{ dayControl.get('day')?.value }}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-check col-3 " >
+                            <div class="form-check col-md-3" >
                                 <input class="form-check-input" formControlName="sameHours" type="checkbox" value="" id="sameHours">
                                 <label class="form-check-label" for="flexCheckDefault">
                                   {{'pharmacyWorking.sameTime'|translate}}
@@ -126,19 +127,19 @@
                                 <div  *ngFor="let dayControl of daysArray.controls; let i = index" [formGroupName]="i">
                                  
                                     <div *ngIf="dayControl.get('enabled')?.value">
-                                       <div class="time-inputs mt-5">
-                                        <div class="day-name">
-                                            {{ dayControl.get('day')?.value }}
-                                        </div>
-                                        <div>
-                                            <input type="checkbox" formControlName="is24Hours" (change)="toggle24Hours(i)"> Is 24 Hours?
-                                        </div>
-                                        <div class="inputs" *ngIf="!dayControl.get('is24Hours')?.value">
-                                            <input placeholder="From *" step="900" onfocus="this.type='time'" class="form-control" formControlName="from">
-                                        </div>
-                                        <div class="inputs" *ngIf="!dayControl.get('is24Hours')?.value">
-                                            <input placeholder="To *" step="900" onfocus="this.type='time'" class="form-control" formControlName="to">
-                                        </div>
+                                       <div class="time-inputs mt-5 row">
+                                            <div class="day-name col-md-3">
+                                                {{ dayControl.get('day')?.value }}
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="checkbox" formControlName="is24Hours" (change)="toggle24Hours(i)"> Is 24 Hours?
+                                            </div>
+                                            <div class=" col-md-3 inputs" *ngIf="!dayControl.get('is24Hours')?.value">
+                                                <input placeholder="From *" step="900" onfocus="this.type='time'" class="form-control m-1" formControlName="from">
+                                            </div>
+                                            <div class="col-md-3 inputs" *ngIf="!dayControl.get('is24Hours')?.value">
+                                                <input placeholder="To *" step="900" onfocus="this.type='time'" class="form-control m-1" formControlName="to">
+                                            </div>
                                        </div> 
                                        <hr>
                                     </div>

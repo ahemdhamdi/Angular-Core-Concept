@@ -33,6 +33,7 @@
     padding-bottom: 8px;
     opacity: 0.4;
     list-style: none;
+    margin: 10px 0px;
 }
 .lpx-wizard-item.active {
     opacity: 1;
@@ -75,13 +76,11 @@
 
 
 .btn-container{
-    display: flex;
-    justify-content: space-between;
-    
+    // display: flex;
+    // justify-content: space-between;
     button{
-        display: inline-block !important;
         padding: 10px;
-        min-width:100px;
+        min-width:90px;
         border-radius: 5px;
         border: 1px solid #154f79 !important;
         background-color: #f0f4f7 !important;
@@ -117,7 +116,7 @@
             font-weight: 600;
         }
         .inputs{
-            width: 270px !important;
+            // width: 270px !important;
             input{
                 display: flex;
                 font-weight: 400;
