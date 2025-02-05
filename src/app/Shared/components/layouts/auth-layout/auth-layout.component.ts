@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SignUpComponent } from '../../../../Components/sign-up/sign-up.component';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { LangService } from '../../../services/lang.service';
 
 @Component({
   selector: 'app-auth-layout',
@@ -10,12 +11,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class AuthLayoutComponent {
 
-  constructor(private translate:TranslateService) { }
+  constructor(private lang:LangService) { }
   
   //Change Language func
   useLanguage(event: Event): void {
     const selectedLanguage = (event.target as HTMLSelectElement).value;
-    this.translate.use(selectedLanguage);
+    this.lang.setLanguage(selectedLanguage); // Update Language
   }
+     
 
 }

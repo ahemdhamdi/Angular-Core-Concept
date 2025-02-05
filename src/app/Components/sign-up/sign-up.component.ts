@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {TranslateModule} from "@ngx-translate/core";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslateService,LangChangeEvent } from "@ngx-translate/core";
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-
+import { LangService } from '../../Shared/services/lang.service';
+// declare var google: any;
+/// <reference types="google.maps" />
 @Component({
   selector: 'app-sign-up',
   imports: [TranslateModule,ReactiveFormsModule,RouterModule,CommonModule],
@@ -13,22 +14,33 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sign-up.component.scss'
 })
 export class SignUpComponent {
+
   currentTab = 0;
   formTabs!: NodeListOf<HTMLElement>;
   wizardItems!: NodeListOf<HTMLElement>;
   readyToSubmit:boolean=false;
-
+  
   registerform!: FormGroup;
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+  @ViewChild('searchBox') searchBoxInput!: ElementRef;
+  @ViewChild('mapContainer') mapContainer!: ElementRef;
+
+  map!: google.maps.Map;
+  markers: google.maps.Marker[] = [];
+  selectedPlaceName: string = '';
 
   constructor(private translate:TranslateService,private router: Router,private builder: FormBuilder) { }
 
   ngOnInit(): void {
+    this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
+      console.log('Language changed to:', event.lang);
+      const selectedLanguage = event.lang;
+      this.loadGoogleMaps(selectedLanguage);
+    });
     this.generateForm();
-    console.log(this.registerform.get('workingHoursForm.days') as FormArray)
+    
   }
-
 
   generateForm() {
     this.registerform = this.builder.group({
@@ -41,12 +53,7 @@ export class SignUpComponent {
         confirm_password:this.builder.control(''),
       }),
       locationForm:this.builder.group({
-        country:this.builder.control(''),
-        city:this.builder.control(''),
-        street:this.builder.control(''),
-        zip:this.builder.control(''),
-        latitude:this.builder.control(''),
-        longitude:this.builder.control(''),
+        placeSearch: this.builder.control('') // Place search input
       }),
       workingHoursForm: this.builder.group({
         sameHours: this.builder.control(false), // Checkbox for same hours all days
@@ -108,15 +115,83 @@ export class SignUpComponent {
       alert('Please Enter Pharmacy Name');
     }
   }
-
-  
-  //#region wizard or Stepper Funcs
+ 
   ngAfterViewInit() {
+    //initial gooogle place
+    this.loadGoogleMaps('en');
+    // get wizard tabs
     this.formTabs = document.querySelectorAll('[data-form-tab]');
+    // get wizard item
     this.wizardItems = document.querySelectorAll('[data-wizard-item]');
     this.showTab(this.currentTab);
   }
 
+  // # Region -- Google Map --
+  loadGoogleMaps(lang:any) {
+    
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAAu836oHdkxoQ0RITqGgf8CTYaKd0e3II&callback=initMap&libraries=places&language=${lang}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => this.initAutocomplete();
+    document.body.appendChild(script);
+    
+  }
+
+  initAutocomplete() {
+    this.map = new google.maps.Map(this.mapContainer.nativeElement, {
+      center: { lat: -33.8688, lng: 151.2195 },
+      zoom: 13,
+      mapTypeId: "roadmap",
+    });
+
+    const input = this.searchBoxInput.nativeElement as HTMLInputElement;
+    const searchBox = new google.maps.places.SearchBox(input);
+
+
+    this.map.addListener("bounds_changed", () => {
+      searchBox.setBounds(this.map.getBounds() as google.maps.LatLngBounds);
+    });
+
+    searchBox.addListener("places_changed", () => {
+      const places = searchBox.getPlaces();
+      if (!places || places.length === 0) return;
+
+      this.markers.forEach(marker => marker.setMap(null));
+      this.markers = [];
+
+      const bounds = new google.maps.LatLngBounds();
+
+      places.forEach((place:any) => {
+        if (!place.geometry || !place.geometry.location) return;
+
+        this.selectedPlaceName = place.name;
+
+
+        const marker = new google.maps.Marker({
+          map: this.map,
+          title: place.name,
+          position: place.geometry.location,
+        });
+
+        this.markers.push(marker);
+
+        this.registerform.get('locationForm')?.patchValue({
+          placeSearch: place.name // Save selected place name in form
+        });
+
+        if (place.geometry.viewport) bounds.union(place.geometry.viewport);
+        else bounds.extend(place.geometry.location);
+      });
+
+      this.map.fitBounds(bounds);
+    });
+  }
+  // #End Region -- Google Map --
+
+
+
+  //#region wizard or Stepper Funcs
   showTab(n: number) {
     
     // Hide all tabs and wizard items
@@ -155,6 +230,5 @@ export class SignUpComponent {
     this.currentTab += n;
     this.showTab(this.currentTab);
   }
-
   //#End -- region 
 }

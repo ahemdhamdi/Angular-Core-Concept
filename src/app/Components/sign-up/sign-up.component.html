@@ -62,36 +62,20 @@
             <div class="lpx-wizard-content" data-form-tab="">
                 <div class="row my-2">
                     <div class="col-12">
-                        <div class="mb-3">
-                            <h5 class="text-dark"><strong>{{'pharmacyLocation.subTitle'|translate}}</strong></h5>
+                        <div class="row" formGroupName="locationForm"> 
+                            <div class="col-md-12 my-2">
+                                <label>{{'Search a Place' | translate}}</label>
+                                <input type="text" #searchBox formControlName="placeSearch" class="form-control place-search" id="placeSearch">
+                            </div>
+                            
+                            <div style="padding: 12px;border-radius: 10px;">
+                                <div #mapContainer id="map" style="height: 400px; width: 100%;border-radius: 10px;"></div>
+                            </div>
                         </div>
-                        
-                        <div class="row" formGroupName="locationForm">
-                            <div class="col-xl-6 mb-3">
-                                <input type="text" formControlName="country" placeholder="{{'country' | translate}} *" class="form-control" id="Country">
-                            </div>
-        
-                            <div class="col-xl-6 mb-3">        
-                                <input type="text" formControlName="city" placeholder="{{'city' | translate}} *"  class="form-control" id="city">
-                            </div>
+                        <div class="mt-2">
+                            <input style="height: 70px;" class="form-control" type="text" [value]="selectedPlaceName" readonly>
 
-                            <div class="col-xl-6 mb-3">        
-                                <input type="text" formControlName="street" placeholder="{{'street' | translate}} *" class="form-control" id="street">
-                            </div>
-
-                            <div class="col-xl-6 mb-3">        
-                                <input type="number" formControlName="zip" placeholder="{{'zipCode' | translate}} *" class="form-control" id="Zip">
-                            </div>
-
-                            <div class="col-xl-6 mb-3">        
-                                <input type="text" formControlName="latitude" placeholder="{{'latitude' | translate}} *" class="form-control" id="latitude">
-                            </div>
-                            <div class="col-xl-6 mb-3">        
-                                <input type="text" formControlName="longitude" placeholder="{{'longitude' | translate}} *" class="form-control" id="longitude">
-                            </div>
-                        
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -147,10 +131,6 @@
                                 </div>
                                 
                             </div>
-
-                            
-                            
-                            
                         </div>
                         
                     </div>

@@ -1,4 +1,5 @@
 
+
 .card{
     border:none !important;
 
@@ -18,8 +19,6 @@
     .next-btn{
         background-color: rgb(10, 118, 151) !important;
     }
-
-
 }
 
 .lpx-wizard-list {
@@ -38,7 +37,6 @@
 .lpx-wizard-item.active {
     opacity: 1;
 }
-
 
 .lpx-wizard-item .lpx-wizard-number {
     width: 40px;
@@ -106,6 +104,8 @@
         margin: 0px 5px !important;
     }
 }
+
+
 .working-hourse-actions{
     .time-inputs{
         display: flex;
