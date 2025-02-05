@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {TranslateModule} from "@ngx-translate/core";
 import {TranslateService} from "@ngx-translate/core";
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-sign-up',
-  imports: [TranslateModule,ReactiveFormsModule],
+  imports: [TranslateModule,ReactiveFormsModule,RouterModule,CommonModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
@@ -19,17 +19,20 @@ export class SignUpComponent {
   readyToSubmit:boolean=false;
 
   registerform!: FormGroup;
+  days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  constructor(private translate:TranslateService,private builder: FormBuilder,private router: Router) { }
+
+  constructor(private translate:TranslateService,private router: Router,private builder: FormBuilder) { }
 
   ngOnInit(): void {
     this.generateForm();
+    console.log(this.registerform.get('workingHoursForm.days') as FormArray)
   }
 
 
   generateForm() {
     this.registerform = this.builder.group({
-      basic:this.builder.group({
+      basicForm:this.builder.group({
         name:this.builder.control('',Validators.required),
         pharmacist:this.builder.control(''),
         email:this.builder.control(''),
@@ -37,7 +40,7 @@ export class SignUpComponent {
         password:this.builder.control(''),
         confirm_password:this.builder.control(''),
       }),
-      location:this.builder.group({
+      locationForm:this.builder.group({
         country:this.builder.control(''),
         city:this.builder.control(''),
         street:this.builder.control(''),
@@ -45,20 +48,60 @@ export class SignUpComponent {
         latitude:this.builder.control(''),
         longitude:this.builder.control(''),
       }),
-      hourse:this.builder.group({
-        start_day:this.builder.control(''),
-        end_day:this.builder.control(''),
-        start_time:this.builder.control(''),
-        end_time:this.builder.control('')
+      workingHoursForm: this.builder.group({
+        sameHours: this.builder.control(false), // Checkbox for same hours all days
+        days: this.builder.array(this.days.map(day => this.createDayControl(day)))
       })
     });
+  }
+
+  // Create FormGroup for each day
+  createDayControl(day: string): FormGroup {
+    return this.builder.group({
+      day: [day],
+      enabled: [false], // If the day is selected
+      is24Hours: [false], // If 24-hour mode is checked
+      from: [''], // Start time
+      to: [''] // End time
+    });
+  }
+
+
+  // Get FormArray reference
+  get daysArray() {
+    return this.registerform.get('workingHoursForm.days') as FormArray;
+  }
+
+
+  // Toggle enabling/disabling specific day
+  toggleDay(index: number) {
+    const dayControl = this.daysArray.at(index);
+    const enabled = dayControl.get('enabled')?.value;
+  
+    // Toggle enabled state
+    dayControl.patchValue({ enabled: !enabled });
+  
+    // If disabled, reset its values
+    if (!dayControl.get('enabled')?.value) {
+      dayControl.patchValue({ is24Hours: false, from: '', to: '' });
+    }
+  }
+
+  // Toggle 24-hour mode
+  toggle24Hours(index: number) {
+    const dayControl = this.daysArray.at(index);
+    const is24Hours = dayControl.get('is24Hours')?.value;
+    if (is24Hours) {
+      dayControl.patchValue({ from: '', to: '' });
+    }
   }
 
 
   submit(){
     if(this.registerform.valid){
       alert('success login');
-      const nameValue = this.registerform.get('basic.name')?.value;
+      console.log(this.registerform.value);
+      const nameValue = this.registerform.get('basicForm.name')?.value;
       this.router.navigate(['/profile',nameValue])
     }
     else{

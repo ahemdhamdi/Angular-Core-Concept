@@ -7,15 +7,11 @@
                 </button>
             </div>
             <div class="translate-btn">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-translate"></i> {{'Language' | translate}}
-                    </button>
-                    <ul class="dropdown-menu">
-                    <li><button class="dropdown-item" (click)="useLanguage('en')">{{'English'|translate}}</button></li>
-                    <li><button class="dropdown-item" (click)="useLanguage('ar')">{{'Arabic'|translate}}</button></li>
-                    </ul>
-                </div>
+                <select id="languageSelect" class="form-select form-control" (change)="useLanguage($event)">
+                    <option value="en"> <i class="bi bi-translate"></i>{{ 'English' | translate }} </option>
+                    <option value="ar"> <i class="bi bi-translate"></i> {{ 'Arabic' | translate }}  </option>
+                </select>
+               
             </div>
         </div>
     </div>

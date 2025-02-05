@@ -30,7 +30,7 @@
                             <h5 class="text-dark"><strong>{{'pharmacyDetails.subTitle' | translate}}</strong></h5>
                         </div>
                         
-                        <div class="row" formGroupName="basic">
+                        <div class="row" formGroupName="basicForm">
                             <div class="col-xl-6 mb-3">
                                 <input type="text" formControlName="name" placeholder="{{'pharmacyDetails.name' | translate}} *" class="form-control" id="parmacyName">
                             </div>
@@ -59,14 +59,14 @@
             </div>
 
             <!-- ======= Pharmacy Location And Place ======== -->
-            <div class="lpx-wizard-content active" data-form-tab="">
+            <div class="lpx-wizard-content" data-form-tab="">
                 <div class="row my-2">
                     <div class="col-12">
                         <div class="mb-3">
                             <h5 class="text-dark"><strong>{{'pharmacyLocation.subTitle'|translate}}</strong></h5>
                         </div>
                         
-                        <div class="row" formGroupName="location">
+                        <div class="row" formGroupName="locationForm">
                             <div class="col-xl-6 mb-3">
                                 <input type="text" formControlName="country" placeholder="{{'country' | translate}} *" class="form-control" id="Country">
                             </div>
@@ -96,29 +96,59 @@
                 </div>
             </div>
             <!-- ======= Pharmacy Working Days ======== -->
-            <div class="lpx-wizard-content active" data-form-tab="">
+            <div class="lpx-wizard-content" data-form-tab="">
                 <div class="row my-2">
                     <div class="col-12">
                         <div class="mb-3">
                             <h5 class="text-dark"><strong>{{'pharmacyWorking.subTitle'|translate}}</strong></h5>
                         </div>
                     
-                        <div class="row" formGroupName="hourse">
-                            <div class="col-xl-6 mb-3">
-                                <input type="text" formControlName="start_day" placeholder="{{'pharmacyWorking.from' | translate}} *" class="form-control" id="from">
-                            </div> 
-        
-                            <div class="col-xl-6 mb-3">        
-                                <input type="text" formControlName="end_day" placeholder="{{'pharmacyWorking.to' | translate}} *" class="form-control" id="to">
+                        <div class="row" formGroupName="workingHoursForm">
+
+                            
+                            <div class="btn-container col-9">
+                                <div *ngFor="let dayControl of daysArray.controls; let i = index" >
+                                    <button type="button" (click)="toggleDay(i)" [ngClass]="{'selected': dayControl.get('enabled')?.value}">
+                                        {{ dayControl.get('day')?.value }}
+                                    </button>
+                                </div>
                             </div>
 
-                            <div class="col-xl-6 mb-3">        
-                                <input type="time" formControlName="start_time" placeholder="open time *" class="form-control" id="openTime">
+                            <div class="form-check col-3 " >
+                                <input class="form-check-input" formControlName="sameHours" type="checkbox" value="" id="sameHours">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                  {{'pharmacyWorking.sameTime'|translate}}
+                                </label>
                             </div>
 
-                            <div class="col-xl-6 mb-3">        
-                                <input type="time" formControlName="end_time" placeholder="close time *" class="form-control" id="closeTime">
+                            <div class="working-hourse-actions col-12" formArrayName="days">
+                            
+                                <div  *ngFor="let dayControl of daysArray.controls; let i = index" [formGroupName]="i">
+                                 
+                                    <div *ngIf="dayControl.get('enabled')?.value">
+                                       <div class="time-inputs mt-5">
+                                        <div class="day-name">
+                                            {{ dayControl.get('day')?.value }}
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" formControlName="is24Hours" (change)="toggle24Hours(i)"> Is 24 Hours?
+                                        </div>
+                                        <div class="inputs" *ngIf="!dayControl.get('is24Hours')?.value">
+                                            <input placeholder="From *" step="900" onfocus="this.type='time'" class="form-control" formControlName="from">
+                                        </div>
+                                        <div class="inputs" *ngIf="!dayControl.get('is24Hours')?.value">
+                                            <input placeholder="To *" step="900" onfocus="this.type='time'" class="form-control" formControlName="to">
+                                        </div>
+                                       </div> 
+                                       <hr>
+                                    </div>
+                                    
+                                </div>
+                                
                             </div>
+
+                            
+                            
                             
                         </div>
                         

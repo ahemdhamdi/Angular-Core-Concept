@@ -35,6 +35,7 @@
     "title": "Working Days",
     "desc": "Working Days & hours",
     "subTitle": "Working Days & hours",
+    "sameTime":"Same working hours for all days?",
     "from":"Workin Hours - From",
     "to":"To -"
   }

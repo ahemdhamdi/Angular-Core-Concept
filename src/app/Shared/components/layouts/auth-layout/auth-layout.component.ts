@@ -13,8 +13,9 @@ export class AuthLayoutComponent {
   constructor(private translate:TranslateService) { }
   
   //Change Language func
-  useLanguage(language: string): void {
-    this.translate.use(language);
+  useLanguage(event: Event): void {
+    const selectedLanguage = (event.target as HTMLSelectElement).value;
+    this.translate.use(selectedLanguage);
   }
 
 }

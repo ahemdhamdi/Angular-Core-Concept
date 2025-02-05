@@ -72,3 +72,63 @@
     border-color: #e8eef3;
     color: #062a44;
 }
+
+
+.btn-container{
+    display: flex;
+    justify-content: space-between;
+    
+    button{
+        display: inline-block !important;
+        padding: 10px;
+        min-width:100px;
+        border-radius: 5px;
+        border: 1px solid #154f79 !important;
+        background-color: #f0f4f7 !important;
+        font-size: large;
+        font-weight: 600;
+    }
+
+    button.selected{
+        border: none !important;
+        background-color: rgb(10, 118, 151) !important;
+        color: #f0f4f7;
+    }
+}
+
+
+.form-check{
+    display: flex;
+    align-items: center !important;
+    input{
+        margin: 0px 5px !important;
+    }
+    label{
+        margin: 0px 5px !important;
+    }
+}
+.working-hourse-actions{
+    .time-inputs{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .day-name{
+            font-size: large;
+            font-weight: 600;
+        }
+        .inputs{
+            width: 270px !important;
+            input{
+                display: flex;
+                font-weight: 400;
+                background-color: #f0f4f7;
+                border-radius: 0.5rem;
+                transition: background-color 0.2s, border-color 0.4s;
+                border-color: #e8eef3;
+                color: #062a44;
+            }
+            
+        }
+    }
+}
+

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SignUpComponent } from './Components/sign-up/sign-up.component';
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,SignUpComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
