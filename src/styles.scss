@@ -43,3 +43,49 @@
     --lpx-border-color: #e8eef3;
     --lpx-shadow: 0 0 20px 0 rgba(76, 87, 125, 0.02);
 }
+
+
+
+.iti {
+    width: 100% !important; /* Adjust width */
+}
+  
+  .iti input {
+    border-radius: 5px;
+    border: none !important;
+    background-color: #f0f4f7 !important;
+  }
+  
+  
+  .iti__selected-flag {
+    background-color: #f0f4f7 !important; /* Style flag dropdown */
+  }
+
+  .search-container{
+    input{
+        border: #438aa7;
+        height: 35px !important;
+    }
+
+    input:focus{
+        border: #438aa7 !important;
+        height: 35px !important;
+    }
+  }
+  
+  .iti__country-list {
+    max-height: 300px; /* Limit dropdown height */
+    overflow-y: auto;
+  }
+
+  .dropdown-menu.iti__dropdown-content{
+    width: 400px !important;
+  }
+  
+  .iti__country {
+    padding: 8px !important;
+  }
+  
+  .iti__country:hover {
+    background-color: #438aa7 !important; /* Hover effect */
+  }

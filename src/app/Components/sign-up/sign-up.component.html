@@ -34,9 +34,56 @@
                             <div class="col-xl-6 mb-3">
                                 <input type="text" formControlName="name" placeholder="{{'pharmacyDetails.name' | translate}} *" class="form-control" id="parmacyName">
                             </div>
+                            <div class="col-xl-6 mb-3">
+                                <ngx-intl-tel-input
+                                    [cssClass]="'form-control'"
+                                    [preferredCountries]="preferredCountries"
+                                    [enableAutoCountrySelect]="true"
+                                    [enablePlaceholder]="true"
+                                    [customPlaceholder]="'Pharmacy Phone *'"
+                                    [searchCountryFlag]="true"
+                                    [searchCountryField]="[
+                                    SearchCountryField.Iso2,
+                                    SearchCountryField.Name
+                                    ]"
+                                    [selectFirstCountry]="false"
+                                    [selectedCountryISO]="CountryISO.UnitedArabEmirates"
+                                    [maxLength]="15"
+                                    [phoneValidation]="true"
+                                    [separateDialCode]="separateDialCode"
+                                    [numberFormat]="PhoneNumberFormat.National"
+                                    name="pharmacy_phone"
+                                    formControlName="pharmacy_phone"
+                                >
+                                </ngx-intl-tel-input>
+                            </div>
         
                             <div class="col-xl-6 mb-3">        
                                 <input type="text" formControlName="pharmacist" placeholder="{{'pharmacyDetails.pharmacist' | translate}} *" class="form-control" id="PharmacistName">
+                            </div>
+
+                            <div class="col-xl-6 mb-3">
+                                <ngx-intl-tel-input
+                                    [cssClass]="'form-control'"
+                                    [preferredCountries]="preferredCountries"
+                                    [enableAutoCountrySelect]="true"
+                                    [enablePlaceholder]="true"
+                                    [customPlaceholder]="'Personal Phone *'"
+                                    [searchCountryFlag]="true"
+                                    [searchCountryField]="[
+                                    SearchCountryField.Iso2,
+                                    SearchCountryField.Name
+                                    ]"
+                                    [selectFirstCountry]="false"
+                                    [selectedCountryISO]="CountryISO.UnitedArabEmirates"
+                                    [maxLength]="15"
+                                    [phoneValidation]="true"
+                                    [separateDialCode]="separateDialCode"
+                                    [numberFormat]="PhoneNumberFormat.National"
+                                    name="personal_phone"
+                                    formControlName="personal_phone"
+                                >
+                                </ngx-intl-tel-input>
                             </div>
 
                             <div class="col-xl-6 mb-3">        

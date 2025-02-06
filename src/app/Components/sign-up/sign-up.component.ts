@@ -5,11 +5,15 @@ import {TranslateService,LangChangeEvent } from "@ngx-translate/core";
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LangService } from '../../Shared/services/lang.service';
-// declare var google: any;
+import { CountryISO, NgxIntlTelInputModule, PhoneNumberFormat, SearchCountryField } from 'ngx-intl-tel-input';
+
+
 /// <reference types="google.maps" />
+
+
 @Component({
   selector: 'app-sign-up',
-  imports: [TranslateModule,ReactiveFormsModule,RouterModule,CommonModule],
+  imports: [TranslateModule,ReactiveFormsModule,RouterModule,CommonModule,NgxIntlTelInputModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
@@ -19,19 +23,31 @@ export class SignUpComponent {
   formTabs!: NodeListOf<HTMLElement>;
   wizardItems!: NodeListOf<HTMLElement>;
   readyToSubmit:boolean=false;
-  
   registerform!: FormGroup;
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+// =====================================================================================================
+  //#region --Telphone Properties
+  PhoneNumberFormat = PhoneNumberFormat;
+  separateDialCode = true;
+	SearchCountryField = SearchCountryField;
+	CountryISO = CountryISO;
+	preferredCountries: CountryISO[] = [CountryISO.UnitedArabEmirates, CountryISO.Egypt];
+  //#endregion
+
+// =====================================================================================================
+
+  //#region --MAP Properties
   @ViewChild('searchBox') searchBoxInput!: ElementRef;
   @ViewChild('mapContainer') mapContainer!: ElementRef;
-
   map!: google.maps.Map;
   markers: google.maps.Marker[] = [];
   selectedPlaceName: string = '';
+  //#endregion
 
+// ========================================================================================================
   constructor(private translate:TranslateService,private router: Router,private builder: FormBuilder) { }
-
+// ========================================================================================================
   ngOnInit(): void {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       console.log('Language changed to:', event.lang);
@@ -41,13 +57,16 @@ export class SignUpComponent {
     this.generateForm();
     
   }
-
+// ========================================================================================================
+  //#region initial form and its controls  
   generateForm() {
     this.registerform = this.builder.group({
       basicForm:this.builder.group({
         name:this.builder.control('',Validators.required),
         pharmacist:this.builder.control(''),
         email:this.builder.control(''),
+        pharmacy_phone:this.builder.control(''),
+        personal_phone:this.builder.control(''),
         license:this.builder.control(''),
         password:this.builder.control(''),
         confirm_password:this.builder.control(''),
@@ -103,7 +122,9 @@ export class SignUpComponent {
     }
   }
 
+  //#endregion
 
+// ========================================================================================================
   submit(){
     if(this.registerform.valid){
       alert('success login');
@@ -115,7 +136,7 @@ export class SignUpComponent {
       alert('Please Enter Pharmacy Name');
     }
   }
- 
+ // ========================================================================================================
   ngAfterViewInit() {
     //initial gooogle place
     this.loadGoogleMaps('en');
@@ -125,8 +146,14 @@ export class SignUpComponent {
     this.wizardItems = document.querySelectorAll('[data-wizard-item]');
     this.showTab(this.currentTab);
   }
-
-  // # Region -- Google Map --
+// ========================================================================================================
+  //#region Telephone number 
+  changePreferredCountries() {
+		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+	}
+  //#endregion 
+// ========================================================================================================
+  //#region -- Google Map --
   loadGoogleMaps(lang:any) {
     
     const script = document.createElement('script');
@@ -187,11 +214,11 @@ export class SignUpComponent {
       this.map.fitBounds(bounds);
     });
   }
-  // #End Region -- Google Map --
+  //#endregion -- Google Map --
 
+// ========================================================================================================
 
-
-  //#region wizard or Stepper Funcs
+  //#region -- wizard or Stepper Funcs --
   showTab(n: number) {
     
     // Hide all tabs and wizard items
@@ -230,5 +257,5 @@ export class SignUpComponent {
     this.currentTab += n;
     this.showTab(this.currentTab);
   }
-  //#End -- region 
+  //#endregion
 }
