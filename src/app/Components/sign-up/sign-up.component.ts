@@ -6,7 +6,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } fr
 import { CommonModule } from '@angular/common';
 import { LangService } from '../../Shared/services/lang.service';
 import { CountryISO, NgxIntlTelInputModule, PhoneNumberFormat, SearchCountryField } from 'ngx-intl-tel-input';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 /// <reference types="google.maps" />
 
@@ -18,6 +19,12 @@ import { CountryISO, NgxIntlTelInputModule, PhoneNumberFormat, SearchCountryFiel
   styleUrl: './sign-up.component.scss'
 })
 export class SignUpComponent {
+
+  nanoFormSelected = true;
+  excelFileSelected = false;
+
+  uploadedData: any[] = []; // Store extracted data
+  
 
   currentTab = 0;
   formTabs!: NodeListOf<HTMLElement>;
@@ -57,6 +64,142 @@ export class SignUpComponent {
     this.generateForm();
     
   }
+
+  toggleRegisterView(registerType:string){
+    if(registerType === 'nano'){
+      this.nanoFormSelected = true;
+      this.excelFileSelected = false;
+    }else{
+      this.nanoFormSelected = false;
+      this.excelFileSelected = true;
+    }
+  }
+
+// ========================================================================================================
+  //#region excl file register functions
+
+  //==== download excel file ====
+  downloadExcelTemplate() {
+    // Define the structure of the Excel file
+    const sampleData = [
+      {
+        pharmacy_name: "shifaa",
+        pharmacist_name: "mohamed",
+        email: "shifaa@example.com",
+        pharmacy_phone: "+1234567890",
+        personal_phone: "+9876543210",
+        license: "123456",
+        password: "password123",
+        confirm_password: "password123",
+        placeSearch: "Dubai",
+        sameHours: "TRUE",
+        Monday_open: "08:00 AM",
+        Monday_close: "06:00 PM",
+        Tuesday_open: "08:00 AM",
+        Tuesday_close: "06:00 PM",
+        Wednesday_open: "08:00 AM",
+        Wednesday_close: "06:00 PM",
+        Thursday_open: "08:00 AM",
+        Thursday_close: "06:00 PM",
+        Friday_open: "08:00 AM",
+        Friday_close: "06:00 PM",
+        Saturday_open: "10:00 AM",
+        Saturday_close: "04:00 PM",
+        Sunday_open: "Closed",
+        Sunday_close: "Closed"
+      }
+    ];
+  
+    // Convert JSON to Excel format
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(sampleData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Users': worksheet }, SheetNames: ['Users'] };
+  
+    // Convert workbook to a buffer
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  
+    // Create a Blob and trigger download
+    const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'Nano_SignUp_Template.xlsx');
+  }
+
+  // On Uploaded file 
+  onFileChange(event: any) {
+    const target: DataTransfer = <DataTransfer>event.target;
+    if (target.files.length !== 1) {
+      console.error("Only one file is allowed.");
+      return;
+    }
+  
+    console.log("Selected file:", target.files[0]); // Debug file selection
+  
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      const arrayBuffer: ArrayBuffer = e.target.result;
+      console.log("ArrayBuffer Data Read:", arrayBuffer); // Debug file reading
+  
+      const workbook: XLSX.WorkBook = XLSX.read(arrayBuffer, { type: 'array' });
+  
+      const sheetName: string = workbook.SheetNames[0]; // Read first sheet
+      console.log("Sheet Name:", sheetName); // Debug sheet name
+  
+      const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
+  
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" }); // Ensure empty cells return ""
+  
+      // Populate form with the first row of data (assuming single sign-up per upload)
+      if (jsonData.length > 0) {
+        const userData:any = jsonData[0];
+  
+        this.registerform.patchValue({
+          basicForm: {
+            pharmacy_name: userData.name,
+            pharmacist_name: userData.pharmacist,
+            email: userData.email,
+            pharmacy_phone: userData.pharmacy_phone,
+            personal_phone: userData.personal_phone,
+            license: userData.license,
+            password: userData.password,
+            confirm_password: userData.confirm_password
+          },
+          locationForm: {
+            placeSearch: userData.placeSearch
+          },
+          workingHoursForm: {
+            sameHours: userData.sameHours === 'TRUE', // Convert string to boolean
+            days: this.populateWorkingHours(userData)
+          }
+        });
+        this.uploadedData = jsonData;
+      }
+    };
+  
+    reader.readAsArrayBuffer(target.files[0]);
+  }
+  
+  // Function to populate working hours
+  populateWorkingHours(userData: any) {
+    return this.days.map(day => ({
+      day: day,
+      open: userData[`${day}_open`] || '',
+      close: userData[`${day}_close`] || ''
+    }));
+  }
+
+
+  processExcel() {
+    if (!this.uploadedData.length) {
+      alert("No data available!");
+      return;
+    }
+
+    // Example: Process each user entry 
+    this.uploadedData.forEach(user => {
+      console.log(`Processing User: ${user.pharmacy_name}, Email: ${user.email}, Phone: ${user.pharmacy_phone}`);
+    });
+  }
+
+//#endregion
+
 // ========================================================================================================
   //#region initial form and its controls  
   generateForm() {

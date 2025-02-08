@@ -1,3 +1,41 @@
+.switch-btns-container{
+    .btn-group{
+        height: 70px;
+        border-radius: 20px !important;
+        background-color: #f0f4f7 !important;
+        border-radius: 40px !important;
+    }
+
+    button{
+        color:#062a44;
+        background-color: #f0f4f7 !important;
+        border-radius: 40px !important;
+    }
+
+    button.selected{
+        color: #f0f4f7 !important;
+        background: #062a44 !important;
+        border-radius: 40px;
+    }
+}
+
+// ==== Excel Template registration style ====
+.download-btn-container{
+   
+    button{
+        padding: 20px;
+        background-color: #154f79;
+        color: #e8eef3;
+        font-size: 25px !important;
+        font-weight: 600;
+        i{
+            margin: 10px;
+            font-size: 25px !important;
+            font-weight: 600 !important;
+        }
+    }
+}
+
 
 .card{
     border:none !important;
