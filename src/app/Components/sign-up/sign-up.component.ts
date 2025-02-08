@@ -83,8 +83,8 @@ export class SignUpComponent {
     // Define the structure of the Excel file
     const sampleData = [
       {
-        pharmacy_name: "shifaa",
-        pharmacist_name: "mohamed",
+        name: "shifaa",
+        pharmacist: "mohamed",
         email: "shifaa@example.com",
         pharmacy_phone: "+1234567890",
         personal_phone: "+9876543210",
@@ -149,11 +149,11 @@ export class SignUpComponent {
       // Populate form with the first row of data (assuming single sign-up per upload)
       if (jsonData.length > 0) {
         const userData:any = jsonData[0];
-  
+        console.log(userData)
         this.registerform.patchValue({
           basicForm: {
-            pharmacy_name: userData.name,
-            pharmacist_name: userData.pharmacist,
+            name: userData.name,
+            pharmacist: userData.pharmacist,
             email: userData.email,
             pharmacy_phone: userData.pharmacy_phone,
             personal_phone: userData.personal_phone,
@@ -170,6 +170,7 @@ export class SignUpComponent {
           }
         });
         this.uploadedData = jsonData;
+        console.log("register form after append",this.registerform.value)
       }
     };
   
@@ -194,8 +195,10 @@ export class SignUpComponent {
 
     // Example: Process each user entry 
     this.uploadedData.forEach(user => {
-      console.log(`Processing User: ${user.pharmacy_name}, Email: ${user.email}, Phone: ${user.pharmacy_phone}`);
+      console.log(`Processing User: ${user.name}, Email: ${user.email}, Phone: ${user.pharmacy_phone}`);
     });
+    // calling submit to login
+    this.submit()
   }
 
 //#endregion
