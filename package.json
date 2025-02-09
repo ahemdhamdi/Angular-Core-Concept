@@ -26,6 +26,7 @@
     "file-saver": "^2.0.5",
     "google-libphonenumber": "^3.2.40",
     "intl-tel-input": "^19.5.7",
+    "ngx-bootstrap": "^19.0.2",
     "ngx-intl-tel-input": "^16.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

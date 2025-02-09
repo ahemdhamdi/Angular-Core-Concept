@@ -293,7 +293,7 @@ export class SignUpComponent {
     this.showTab(this.currentTab);
   }
 // ========================================================================================================
-  //#region Telephone number 
+  //#region Telephone number func
   changePreferredCountries() {
 		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	}
