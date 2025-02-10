@@ -31,6 +31,7 @@ export class SignUpComponent {
   wizardItems!: NodeListOf<HTMLElement>;
   readyToSubmit:boolean=false;
   registerform!: FormGroup;
+  onlyTime:boolean=false;
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 // =====================================================================================================
@@ -48,8 +49,9 @@ export class SignUpComponent {
   @ViewChild('searchBox') searchBoxInput!: ElementRef;
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   map!: google.maps.Map;
-  markers: google.maps.Marker[] = [];
-  selectedPlaceName: string = '';
+  markers: google.maps.marker.AdvancedMarkerElement[] = [];
+  selectedMarker!: google.maps.marker.AdvancedMarkerElement;
+  selectedPlaceName: any = '';
   //#endregion
 
 // ========================================================================================================
@@ -268,6 +270,30 @@ export class SignUpComponent {
     }
   }
 
+  // Toggle Same Hours for all days
+  sameHours() {
+    this.onlyTime=true;
+    const sameHoursChecked = this.registerform.get('workingHoursForm.sameHours')?.value;
+  
+    // If same hours is checked, show the time fields for all days
+    if (sameHoursChecked) {
+      const fromTime = this.daysArray.controls[0].get('from')?.value;
+      const toTime = this.daysArray.controls[0].get('to')?.value;
+  
+      // Loop through the days and update the time fields for each enabled day
+      this.daysArray.controls.forEach(dayControl => {
+        if (dayControl.get('enabled')?.value) {
+          dayControl.patchValue({ from: fromTime, to: toTime });
+        }
+      });
+    } else {
+      // If not checked, reset time values for all days
+      this.daysArray.controls.forEach(dayControl => {
+        dayControl.patchValue({ from: '', to: '' });
+      });
+    }
+  }
+
   //#endregion
 
 // ========================================================================================================
@@ -300,66 +326,178 @@ export class SignUpComponent {
   //#endregion 
 // ========================================================================================================
   //#region -- Google Map --
-  loadGoogleMaps(lang:any) {
-    
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAAu836oHdkxoQ0RITqGgf8CTYaKd0e3II&callback=initMap&libraries=places&language=${lang}`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => this.initAutocomplete();
-    document.body.appendChild(script);
+
+  loadGoogleMaps(lang: string) {
+
+
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]') as HTMLScriptElement;
+
+      if (existingScript) {
+        console.log("Google Maps script already exists:", existingScript);
+
+        // Get the current script src
+        let currentSrc = existingScript.getAttribute('src') as string;
+
+        // Regex to match the "language=" parameter in the URL
+        const languageRegex = /[?&]language=[a-zA-Z-]+/;
+
+        if (languageRegex.test(currentSrc)) {
+          // If language parameter exists, replace it
+          currentSrc = currentSrc.replace(languageRegex, `&language=${lang}`);
+        } else {
+          // If language parameter doesn't exist, append it
+          currentSrc += `&language=${lang}`;
+        }
+
+        // Reload the script by setting the src again
+        existingScript.setAttribute('src', currentSrc);
+
+        console.log("Updated script src:", existingScript.src);
+
+        // Call initAutocomplete again to update the map with the new language
+        existingScript.onload = () => {
+          this.initAutocomplete();
+        };
+        return;
+      }
+
+      // If script does not exist, create and add it
+      const newScript = document.createElement('script') as HTMLScriptElement;
+      newScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAAu836oHdkxoQ0RITqGgf8CTYaKd0e3II&libraries=places,marker&language=${lang}`;
+      newScript.async = true;
+      newScript.defer = true;
+      
+      newScript.onload = () => {
+        this.initAutocomplete();
+      };
+
+      document.body.appendChild(newScript);
+      console.log("New script added:", newScript.src);
+
+      // Find the existing script
+    // const existingScript = document.querySelector('script[src*="maps.googleapis.com"]') as HTMLScriptElement;
+
+    // if (existingScript) {
+    //   console.log("Google Maps script already exists:", existingScript);
+
+    //   // Remove the old script before adding the new one
+    //   existingScript.remove();
+    //   console.log("Old script removed.");
+    // }
+
+    // // Create and append a new script with the updated language
+    // const newScript = document.createElement('script') as HTMLScriptElement;
+    // newScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAAu836oHdkxoQ0RITqGgf8CTYaKd0e3II&libraries=places,marker&language=${lang}`;
+    // newScript.async = true;
+    // newScript.defer = true;
+
+    // newScript.onload = () => {
+    //   console.log("New script loaded with language:", lang);
+    //   this.initAutocomplete(); // Reinitialize the map
+    // };
+
+    // document.body.appendChild(newScript);
+    // console.log("New script added:", newScript.src);
     
   }
 
-  initAutocomplete() {
+  async initAutocomplete() {
+    // Default location (United Arab Emirates)
+    const defaultLocation = { lat: 25.276987, lng: 55.296249 }; // Example: Dubai, UAE
     this.map = new google.maps.Map(this.mapContainer.nativeElement, {
-      center: { lat: -33.8688, lng: 151.2195 },
+      center: defaultLocation,
       zoom: 13,
       mapTypeId: "roadmap",
+      mapId: "90523c0c1ad46807",
     });
 
+    // Load AdvancedMarkerElement dynamically
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+
+    // Create and store a single marker (initially at the default location)
+    this.selectedMarker = new AdvancedMarkerElement({
+      map: this.map,
+      title: "Default Location",
+      position: defaultLocation,
+    });
+
+    // Set up search box functionality
     const input = this.searchBoxInput.nativeElement as HTMLInputElement;
     const searchBox = new google.maps.places.SearchBox(input);
-
 
     this.map.addListener("bounds_changed", () => {
       searchBox.setBounds(this.map.getBounds() as google.maps.LatLngBounds);
     });
 
-    searchBox.addListener("places_changed", () => {
+    searchBox.addListener("places_changed", async () => {
       const places = searchBox.getPlaces();
       if (!places || places.length === 0) return;
 
-      this.markers.forEach(marker => marker.setMap(null));
-      this.markers = [];
+      const place = places[0]; // Get the first selected place
+      if (!place.geometry || !place.geometry.location) return;
 
-      const bounds = new google.maps.LatLngBounds();
+      // Update the selected place name
+      this.selectedPlaceName = place.name ?? '';  // Handle undefined
 
-      places.forEach((place:any) => {
-        if (!place.geometry || !place.geometry.location) return;
+      const selectedLocation = place.geometry.location;
 
-        this.selectedPlaceName = place.name;
+      // Ensure the selected location is not null
+      if (selectedLocation) {
+        // If the marker is already created, update its position and title
+        this.selectedMarker.position = selectedLocation;
+        this.selectedMarker.title = place.name ?? '';
 
-
-        const marker = new google.maps.Marker({
-          map: this.map,
-          title: place.name,
-          position: place.geometry.location,
-        });
-
-        this.markers.push(marker);
-
+        // Update the form with the selected place name
         this.registerform.get('locationForm')?.patchValue({
-          placeSearch: place.name // Save selected place name in form
+          placeSearch: this.selectedPlaceName,
         });
 
-        if (place.geometry.viewport) bounds.union(place.geometry.viewport);
-        else bounds.extend(place.geometry.location);
-      });
+        // Center the map and zoom in
+        this.map.setCenter(selectedLocation);
+        this.map.setZoom(15);
+      }
+    });
 
-      this.map.fitBounds(bounds);
+    // Handle map click event to select location
+    this.map.addListener('click', (event: google.maps.MapMouseEvent) => {
+      const clickedLocation = event.latLng;
+      
+      // Log the clicked location for debugging
+      console.log("Clicked location: ", clickedLocation);
+
+      // Ensure the clicked location is not null
+      if (clickedLocation) {
+        // Reverse geocode the clicked location to get the place name
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: clickedLocation }, (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK && results?.[0]) {
+            const clickedPlace = results[0];
+
+            // Log the clicked place for debugging
+            console.log("Clicked place: ", clickedPlace);
+
+            // Update the selected place name and form
+            this.selectedPlaceName = clickedPlace.formatted_address ?? '';
+            this.registerform.get('locationForm')?.patchValue({
+              placeSearch: this.selectedPlaceName,
+            });
+
+            // If the marker is already created, update its position and title
+            this.selectedMarker.position = clickedLocation;
+            this.selectedMarker.title = this.selectedPlaceName;
+
+            // Log the updated marker position for debugging
+            console.log("Updated marker position: ", this.selectedMarker.position);
+
+            // Center the map on the clicked location and zoom in
+            this.map.setCenter(clickedLocation);
+            this.map.setZoom(15);
+          }
+        });
+      }
     });
   }
+
   //#endregion -- Google Map --
 
 // ========================================================================================================
