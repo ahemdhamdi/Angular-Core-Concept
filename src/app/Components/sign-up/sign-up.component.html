@@ -15,23 +15,50 @@
         <!-- ======== excel File ======== -->
         <div *ngIf="excelFileSelected" class="row my-2">
             <div class="download-btn-container col-md-6">
-                <h5>
-                    Download Excel Template And Fill It With Your Info.
-                </h5>
-                <button class="form-control" (click)="downloadExcelTemplate()">
-                    <i class="bi bi-download"></i>
-                    <span> Download Excel Template</span>
-                </button>
-
+                <div class="row">
+                    <div class="col-md-12 text-center mb-3">
+                        <h5>
+                            Download Excel Template And Fill It With Your Info.
+                        </h5>
+                    </div>
+                    <div class="col-md-12 text-center ">
+                        <button (click)="downloadExcelTemplate()">
+                            <i class="bi bi-download"></i>
+                            <span> Download</span>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="upload-btn-container col-md-6">
-                <h5>
-                    Upload Excel Template Fillen with your Info.
-                </h5>
-                <input type="file" class="form-control" (change)="onFileChange($event)" accept=".xlsx, .xls" />
-                <button class="btn" (click)="processExcel()">Submit</button>
+                <div class="row">
+                    <div class="col-md-12 text-center mb-3">
+                        <h5>
+                            Upload Excel Template Fillen with your Info.
+                        </h5>
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <!-- Hidden file input -->
+                        <input 
+                        type="file" 
+                        #fileInput 
+                        style="display: none" 
+                        (change)="onFileChange($event)" 
+                        accept=".xlsx, .xls" 
+                        />
+
+                        <!-- Button to trigger file selection -->
+                        <button (click)="fileInput.click()">
+                            <i class="bi bi-upload"></i>
+                            <span>Upload</span>
+                        </button>
+                    </div>
+                </div>
+                
+                
             </div>
-            
+            <div class="col-md-12 mb-5 text-center">
+                <button class="btn btn-primary mt-5" (click)="processExcel()">Submit</button>
+            </div>
             
         </div>
          
@@ -90,7 +117,6 @@
                                         [numberFormat]="PhoneNumberFormat.National"
                                         name="pharmacy_phone"
                                         formControlName="pharmacy_phone"
-                                        id="pharmacy_phone"
                                     >
                                     </ngx-intl-tel-input>
                                     
@@ -196,13 +222,30 @@
                                 </div>
     
                                 <div class="form-check col-md-3" >
-                                    <input class="form-check-input" formControlName="sameHours" type="checkbox" (change)="sameHours()" value="" id="sameHours">
+                                    <input class="form-check-input" formControlName="sameHours" type="checkbox" value="" id="sameHours">
                                     <label class="form-check-label" for="flexCheckDefault">
                                       {{'pharmacyWorking.sameTime'|translate}}
                                     </label>
                                 </div>
     
-                                @if(!onlyTime){
+                                @if(registerform.get('workingHoursForm.sameHours')?.value){
+                                    <div class="time-inputs mt-5 row">
+                                        
+                                        <div class="col">
+                                            <input type="checkbox" formControlName="is24Hours"> Is 24 Hours?
+                                        </div>
+                                        @if(!registerform.get('workingHoursForm.is24Hours')?.value){
+                                            <div class="col inputs">
+                                                <input placeholder="From *" step="900" onfocus="this.type='time'" class="form-control m-1" formControlName="from">
+                                            </div>
+                                            <div class="col inputs" >
+                                                <input placeholder="To *" step="900" onfocus="this.type='time'" class="form-control m-1" formControlName="to">
+                                            </div>
+                                        }
+                                        
+                                   </div> 
+                                }
+                                @else{
                                     <div class="working-hourse-actions col-12" formArrayName="days">
                                 
                                         <div  *ngFor="let dayControl of daysArray.controls; let i = index" [formGroupName]="i">
@@ -212,31 +255,6 @@
                                                     <div class="day-name col-md-6">
                                                         {{ dayControl.get('day')?.value }}
                                                     </div>
-                                                    <div class="col">
-                                                        <input type="checkbox" formControlName="is24Hours" (change)="toggle24Hours(i)"> Is 24 Hours?
-                                                    </div>
-                                                    <div class="col inputs" *ngIf="!dayControl.get('is24Hours')?.value">
-                                                        <input placeholder="From *" step="900" onfocus="this.type='time'" class="form-control m-1" formControlName="from">
-                                                    </div>
-                                                    <div class="col inputs" *ngIf="!dayControl.get('is24Hours')?.value">
-                                                        <input placeholder="To *" step="900" onfocus="this.type='time'" class="form-control m-1" formControlName="to">
-                                                    </div>
-                                               </div> 
-                                               <hr>
-                                            </div>
-                                            
-                                        </div>
-                                        
-                                    </div>
-                                }
-                                @else {
-                                    <div class="working-hourse-actions col-12" formArrayName="days">
-                                
-                                        <div  *ngFor="let dayControl of daysArray.controls; let i = index" [formGroupName]="i">
-                                         
-                                            <div>
-                                               <div class="time-inputs mt-5 row">
-                                                    
                                                     <div class="col">
                                                         <input type="checkbox" formControlName="is24Hours" (change)="toggle24Hours(i)"> Is 24 Hours?
                                                     </div>

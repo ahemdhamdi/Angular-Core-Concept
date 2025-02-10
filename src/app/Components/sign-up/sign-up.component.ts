@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {TranslateModule} from "@ngx-translate/core";
 import {TranslateService,LangChangeEvent } from "@ngx-translate/core";
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LangService } from '../../Shared/services/lang.service';
 import { CountryISO, NgxIntlTelInputModule, PhoneNumberFormat, SearchCountryField } from 'ngx-intl-tel-input';
@@ -25,13 +25,14 @@ export class SignUpComponent {
 
   uploadedData: any[] = []; // Store extracted data
   
+  uniqueId = Math.random().toString(36).substr(2, 9);
 
   currentTab = 0;
   formTabs!: NodeListOf<HTMLElement>;
   wizardItems!: NodeListOf<HTMLElement>;
   readyToSubmit:boolean=false;
   registerform!: FormGroup;
-  onlyTime:boolean=false;
+  sameHoursForAll:boolean=false;
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 // =====================================================================================================
@@ -181,13 +182,17 @@ export class SignUpComponent {
   
   // Function to populate working hours
   populateWorkingHours(userData: any) {
-    return this.days.map(day => ({
-      day: day,
-      open: userData[`${day}_open`] || '',
-      close: userData[`${day}_close`] || ''
-    }));
+    return this.days.map(day => {
+      const from = userData[`${day}_open`] || '';
+      const to = userData[`${day}_close`] || '';
+      return {
+        day: day,
+        from: from,
+        to: to,
+        enabled: from !== '' && to !== '' // Set enabled to true only if both from and to have values
+      };
+    });
   }
-
 
   processExcel() {
     if (!this.uploadedData.length) {
@@ -224,8 +229,15 @@ export class SignUpComponent {
       }),
       workingHoursForm: this.builder.group({
         sameHours: this.builder.control(false), // Checkbox for same hours all days
+        is24Hours: [false],  // Ensure this is defined
+        from: [''],
+        to: [''],
         days: this.builder.array(this.days.map(day => this.createDayControl(day)))
       })
+    });
+    // Subscribe to `sameHours` changes
+    this.registerform.get('workingHoursForm.sameHours')?.valueChanges.subscribe((isChecked) => {
+      this.toggleSameHours(isChecked);
     });
   }
 
@@ -246,15 +258,14 @@ export class SignUpComponent {
     return this.registerform.get('workingHoursForm.days') as FormArray;
   }
 
-
   // Toggle enabling/disabling specific day
   toggleDay(index: number) {
     const dayControl = this.daysArray.at(index);
     const enabled = dayControl.get('enabled')?.value;
-  
+
     // Toggle enabled state
     dayControl.patchValue({ enabled: !enabled });
-  
+
     // If disabled, reset its values
     if (!dayControl.get('enabled')?.value) {
       dayControl.patchValue({ is24Hours: false, from: '', to: '' });
@@ -265,35 +276,54 @@ export class SignUpComponent {
   toggle24Hours(index: number) {
     const dayControl = this.daysArray.at(index);
     const is24Hours = dayControl.get('is24Hours')?.value;
+    
+    // If 24-hour mode is checked, reset from & to fields
     if (is24Hours) {
       dayControl.patchValue({ from: '', to: '' });
     }
   }
 
   // Toggle Same Hours for all days
-  sameHours() {
-    this.onlyTime=true;
-    const sameHoursChecked = this.registerform.get('workingHoursForm.sameHours')?.value;
-  
-    // If same hours is checked, show the time fields for all days
-    if (sameHoursChecked) {
-      const fromTime = this.daysArray.controls[0].get('from')?.value;
-      const toTime = this.daysArray.controls[0].get('to')?.value;
-  
-      // Loop through the days and update the time fields for each enabled day
-      this.daysArray.controls.forEach(dayControl => {
-        if (dayControl.get('enabled')?.value) {
-          dayControl.patchValue({ from: fromTime, to: toTime });
-        }
-      });
-    } else {
-      // If not checked, reset time values for all days
-      this.daysArray.controls.forEach(dayControl => {
-        dayControl.patchValue({ from: '', to: '' });
+  toggleSameHours(event: any): void {
+    
+    const sameHours = this.registerform.get('workingHoursForm.sameHours')?.value;
+    const from = this.registerform.get('workingHoursForm.from')?.value;
+    const to = this.registerform.get('workingHoursForm.to')?.value;
+    const is24Hours = this.registerform.get('workingHoursForm.is24Hours')?.value;
+
+    if (sameHours) {
+      this.daysArray.controls.forEach((dayControl) => {
+        dayControl.patchValue({
+          enabled: true,
+          is24Hours: is24Hours,
+          from: is24Hours ? '' : from,
+          to: is24Hours ? '' : to
+        });
       });
     }
   }
 
+  // Toggle 24-hour mode for all days
+  toggle24HoursForAll(is24Hours: boolean): void {
+    if (this.registerform.get('workingHoursForm.sameHours')?.value) {
+      // If "Same hours" is checked, update global 24-hour toggle
+      this.registerform.patchValue({
+        workingHoursForm: {
+          from: is24Hours ? '' : this.registerform.get('workingHoursForm.from')?.value,
+          to: is24Hours ? '' : this.registerform.get('workingHoursForm.to')?.value
+        }
+      });
+
+      // Apply to all days
+      this.daysArray.controls.forEach(dayControl => {
+        dayControl.patchValue({
+          is24Hours,
+          from: is24Hours ? '' : dayControl.get('from')?.value,
+          to: is24Hours ? '' : dayControl.get('to')?.value
+        });
+      });
+    }
+  }
   //#endregion
 
 // ========================================================================================================
@@ -363,8 +393,8 @@ export class SignUpComponent {
 
       // If script does not exist, create and add it
       const newScript = document.createElement('script') as HTMLScriptElement;
-      newScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAAu836oHdkxoQ0RITqGgf8CTYaKd0e3II&libraries=places,marker&language=${lang}`;
       newScript.async = true;
+      newScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAAu836oHdkxoQ0RITqGgf8CTYaKd0e3II&libraries=places,marker&language=${lang}`;
       newScript.defer = true;
       
       newScript.onload = () => {
